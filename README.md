@@ -36,10 +36,11 @@ Design a software capable of proposing optimized routes for a mobile office (van
 
 1. [Project Overview](#project-ov)
 2. [Challenges we ran into](#callenge)
-3. [Learning](#learning)
-4. [Next](#next)
-5. [Screenshots](#screen)
-6. [Licence](#license)<br><br>
+3. [Project Setup](#project-setup)
+4. [Learning](#learning)
+5. [Next](#next)
+6. [Screenshots](#screen)
+7. [Licence](#license)<br><br>
 
 <a name="project-ov"></a>
 ## Project Overview
@@ -48,6 +49,71 @@ We devided the work in forntend and backend. For the forntend we build a web wit
 <a name="callenge"></a>
 ## Challenges we ran into
 Finding a good modelizations and algorithm. Also the heuristic for calculating the optimal routes. Work with new frameworks, and moreover having to calculate distances from all pairs of cities. And little details like correcting the names of the dataset of small cities so the API recognised them inside Spain.
+
+<a name="project-setup"></a>
+## Project Setup
+First of all, we need to run the solver in order to compile its results into a readable json file:
+
+To do that, we'll need to create a virtualenviroment and install all the requirements
+```
+cd ./solver
+```
+```
+virtualenv env --python=python3.10
+```
+```
+source env/bin/activate
+```
+```
+pip install -r requirements.txt
+```
+Once created, we'll run the solver once and then, enable the FlaskAPI service to allow access to the json computed file (that contains all events in the correct order) to the backend (Laravel).
+```
+python3 solver.py
+```
+Now, run the FlaskAPI service:
+```
+cd ./web_server
+```
+```
+python3 app.py
+```
+
+Once having the FlaskAPI service up, we'll need to enable the backend service (Laravel) with PHP 8.3.6
+```
+cd ../../web
+```
+```
+composer install
+```
+Once installed all dependencies, now we can create a ``.env`` file by copying the `.env.example` and configuring all the standard credentials (we'll only need to set up the [database section if needed](https://www.inmotionhosting.com/support/edu/laravel/how-to-configure-the-laravel-env-for-a-database/), by default uses Sqlite3) 
+
+Don't forget to add the DATA_URI credential with the value of the host of the FlaskAPI e.g. ``DATA_URI="http://127.0.0.1:5000/"`` if running in the same machine on port 5000.
+
+If using in different devices, use [ngrok](https://ngrok.com/). (We used it for the demo)
+
+```
+php artisan migrate
+```
+```
+php artisan serve
+```
+In another terminal, we'll launch the frontend active CSS compiling service using tailwindcss, (for development purposes)
+```
+cd .. && npm install
+```
+To recompile every time any file gets changed: 
+```
+npm run dev
+```
+To create a production css-compiled snapshot:
+```
+npm run build
+```
+Now, you're ready to go and all services are up!
+
+You can enjoy the responsive web-app at 127.0.0.1:8000 (probably), or see the ``php artisan serve`` section and check which port is running on.
+
 
 <a name="learning"></a>
 ## Learning 🎓
